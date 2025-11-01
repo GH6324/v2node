@@ -411,15 +411,6 @@ show_enable_status() {
     fi
 }
 
-generate_x25519_key() {
-    echo -n "正在生成 x25519 密钥："
-    /usr/local/v2node/v2node x25519
-    echo ""
-    if [[ $# == 0 ]]; then
-        before_show_menu
-    fi
-}
-
 show_v2node_version() {
     echo -n "v2node 版本："
     /usr/local/v2node/v2node version
@@ -538,17 +529,15 @@ show_menu() {
   ${green}9.${plain} 设置 v2node 开机自启
   ${green}10.${plain} 取消 v2node 开机自启
 ————————————————
-  ${green}11.${plain} 一键安装 bbr (最新内核)
-  ${green}12.${plain} 查看 v2node 版本
-  ${green}13.${plain} 生成 X25519 密钥
-  ${green}14.${plain} 升级 v2node 维护脚本
-  ${green}15.${plain} 生成 v2node 配置文件
-  ${green}16.${plain} 放行 VPS 的所有网络端口
-  ${green}17.${plain} 退出脚本
+  ${green}11.${plain} 查看 v2node 版本
+  ${green}12.${plain} 升级 v2node 维护脚本
+  ${green}13.${plain} 生成 v2node 配置文件
+  ${green}14.${plain} 放行 VPS 的所有网络端口
+  ${green}15.${plain} 退出脚本
  "
  #后续更新可加入上方字符串中
     show_status
-    echo && read -rp "请输入选择 [0-17]: " num
+    echo && read -rp "请输入选择 [0-15]: " num
 
     case "${num}" in
         0) config ;;
@@ -562,14 +551,12 @@ show_menu() {
         8) check_install && show_log ;;
         9) check_install && enable ;;
         10) check_install && disable ;;
-        11) install_bbr ;;
-        12) check_install && show_v2node_version ;;
-        13) check_install && generate_x25519_key ;;
-        14) update_shell ;;
-        15) generate_config_file ;;
-        16) open_ports ;;
-        17) exit ;;
-        *) echo -e "${red}请输入正确的数字 [0-16]${plain}" ;;
+        11) check_install && show_v2node_version ;;
+        12) update_shell ;;
+        13) generate_config_file ;;
+        14) open_ports ;;
+        15) exit ;;
+        *) echo -e "${red}请输入正确的数字 [0-15]${plain}" ;;
     esac
 }
 
@@ -588,7 +575,6 @@ if [[ $# > 0 ]]; then
         "generate") generate_config_file ;;
         "install") check_uninstall 0 && install 0 ;;
         "uninstall") check_install 0 && uninstall 0 ;;
-        "x25519") check_install 0 && generate_x25519_key 0 ;;
         "version") check_install 0 && show_v2node_version 0 ;;
         "update_shell") update_shell ;;
         *) show_usage
