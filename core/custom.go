@@ -96,6 +96,7 @@ func GetCustomConfig(infos []*panel.NodeInfo) (*dns.Config, []*core.OutboundHand
 				coreDnsConfig.Servers = append(coreDnsConfig.Servers, server)
 			case "block":
 				rule := map[string]interface{}{
+					"inboundTag":  info.Tag,
 					"domain":      route.Match,
 					"outboundTag": "block",
 				}
@@ -106,6 +107,7 @@ func GetCustomConfig(infos []*panel.NodeInfo) (*dns.Config, []*core.OutboundHand
 				coreRouterConfig.RuleList = append(coreRouterConfig.RuleList, rawRule)
 			case "block_ip":
 				rule := map[string]interface{}{
+					"inboundTag":  info.Tag,
 					"ip":          route.Match,
 					"outboundTag": "block",
 				}
@@ -116,6 +118,7 @@ func GetCustomConfig(infos []*panel.NodeInfo) (*dns.Config, []*core.OutboundHand
 				coreRouterConfig.RuleList = append(coreRouterConfig.RuleList, rawRule)
 			case "protocol":
 				rule := map[string]interface{}{
+					"inboundTag":  info.Tag,
 					"protocol":    route.Match,
 					"outboundTag": "block",
 				}
@@ -134,6 +137,7 @@ func GetCustomConfig(infos []*panel.NodeInfo) (*dns.Config, []*core.OutboundHand
 					continue
 				}
 				rule := map[string]interface{}{
+					"inboundTag":  info.Tag,
 					"domain":      route.Match,
 					"outboundTag": outbound.Tag,
 				}
@@ -160,6 +164,7 @@ func GetCustomConfig(infos []*panel.NodeInfo) (*dns.Config, []*core.OutboundHand
 					continue
 				}
 				rule := map[string]interface{}{
+					"inboundTag":  info.Tag,
 					"ip":          route.Match,
 					"outboundTag": outbound.Tag,
 				}
@@ -195,6 +200,7 @@ func GetCustomConfig(infos []*panel.NodeInfo) (*dns.Config, []*core.OutboundHand
 				}
 				coreOutboundConfig = append(coreOutboundConfig, custom_outbound)
 				rule := map[string]interface{}{
+					"inboundTag":  info.Tag,
 					"network":     "tcp,udp",
 					"outboundTag": "default_out",
 				}

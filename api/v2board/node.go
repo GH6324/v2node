@@ -26,8 +26,8 @@ type NodeInfo struct {
 	Security     int
 	PushInterval time.Duration
 	PullInterval time.Duration
-
-	Common *CommonNode
+	Tag          string
+	Common       *CommonNode
 }
 
 type CommonNode struct {
@@ -160,6 +160,7 @@ func (c *Client) GetNodeInfo() (node *NodeInfo, err error) {
 	default:
 		return nil, fmt.Errorf("unsupport protocol: %s", cm.Protocol)
 	}
+	node.Tag = fmt.Sprintf("[%s]-%s:%d", c.APIHost, node.Type, node.Id)
 	cf := cm.TlsSettings.CertFile
 	kf := cm.TlsSettings.KeyFile
 	if cf == "" {

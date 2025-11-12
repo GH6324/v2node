@@ -60,7 +60,7 @@ func (c *Controller) Start(x *core.V2Core) error {
 	if err != nil {
 		return fmt.Errorf("failed to get user alive list: %s", err)
 	}
-	c.tag = c.buildNodeTag(node)
+	c.tag = node.Tag
 
 	// add limiter
 	l := limiter.AddLimiter(c.tag, c.userList, c.aliveMap)
@@ -110,8 +110,4 @@ func (c *Controller) Close() error {
 		return fmt.Errorf("del node error: %s", err)
 	}
 	return nil
-}
-
-func (c *Controller) buildNodeTag(node *panel.NodeInfo) string {
-	return fmt.Sprintf("[%s]-%s:%d", c.apiClient.APIHost, node.Type, node.Id)
 }
