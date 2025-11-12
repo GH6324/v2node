@@ -47,12 +47,14 @@ func (n *Node) Start(nodes []conf.NodeConfig, core *core.V2Core) error {
 	return nil
 }
 
-func (n *Node) Close() {
+func (n *Node) Close() error {
+	var err error
 	for _, c := range n.controllers {
-		if err := c.Close(); err != nil {
-			// log and continue closing others to avoid blocking shutdown
+		if err = c.Close(); err != nil {
 			log.Errorf("close controller failed: %v", err)
+			return err
 		}
 	}
 	n.controllers = nil
+	return nil
 }

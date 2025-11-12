@@ -120,10 +120,9 @@ func serverHandle(_ *cobra.Command, _ []string) {
 		case <-reloadCh:
 			log.Info("收到重启信号，正在重新加载配置...")
 			if err := reload(config, &nodes, &v2core); err != nil {
-				log.WithField("err", err).Error("重启失败")
-			} else {
-				log.Info("重启成功")
+				log.WithField("err", err).Panic("重启失败")
 			}
+			log.Info("重启成功")
 		}
 	}
 }
@@ -135,7 +134,10 @@ func reload(config string, nodes **node.Node, v2core **core.V2Core) error {
 		oldReloadCh = (*v2core).ReloadCh
 	}
 
-	(*nodes).Close()
+	if err := (*nodes).Close(); err != nil {
+		return err
+	}
+
 	if err := (*v2core).Close(); err != nil {
 		return err
 	}

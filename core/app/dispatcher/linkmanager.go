@@ -23,7 +23,7 @@ func (w *ManagedWriter) Close() error {
 
 type LinkManager struct {
 	links map[*ManagedWriter]buf.Reader
-	mu    sync.Mutex
+	mu    sync.RWMutex
 }
 
 func (m *LinkManager) AddLink(writer *ManagedWriter, reader buf.Reader) {
@@ -39,6 +39,8 @@ func (m *LinkManager) RemoveWriter(writer *ManagedWriter) {
 }
 
 func (m *LinkManager) CloseAll() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	for w, r := range m.links {
 		common.Close(w)
 		common.Interrupt(r)
