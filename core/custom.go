@@ -185,30 +185,29 @@ func GetCustomConfig(infos []*panel.NodeInfo) (*dns.Config, []*core.OutboundHand
 				if route.ActionValue == nil {
 					continue
 				}
-				if hasOutboundWithTag(coreOutboundConfig, "default_out") {
-					continue
-				}
 				outbound := &coreConf.OutboundDetourConfig{}
 				err := json.Unmarshal([]byte(*route.ActionValue), outbound)
 				if err != nil {
 					continue
 				}
-				outbound.Tag = "default_out"
-				custom_outbound, err := outbound.Build()
-				if err != nil {
-					continue
-				}
-				coreOutboundConfig = append(coreOutboundConfig, custom_outbound)
 				rule := map[string]interface{}{
 					"inboundTag":  info.Tag,
 					"network":     "tcp,udp",
-					"outboundTag": "default_out",
+					"outboundTag": outbound.Tag,
 				}
 				rawRule, err := json.Marshal(rule)
 				if err != nil {
 					continue
 				}
 				coreRouterConfig.RuleList = append(coreRouterConfig.RuleList, rawRule)
+				if hasOutboundWithTag(coreOutboundConfig, outbound.Tag) {
+					continue
+				}
+				custom_outbound, err := outbound.Build()
+				if err != nil {
+					continue
+				}
+				coreOutboundConfig = append(coreOutboundConfig, custom_outbound)
 			default:
 				continue
 			}
