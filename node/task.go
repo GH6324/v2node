@@ -60,6 +60,8 @@ func (c *Controller) nodeInfoMonitor() (err error) {
 			case c.server.ReloadCh <- struct{}{}:
 			default:
 			}
+		} else {
+			log.Panic("Reload failed")
 		}
 	}
 	// get user info

@@ -3,7 +3,6 @@ package cmd
 import (
 	"os"
 	"os/signal"
-	"path/filepath"
 	"runtime"
 	"syscall"
 
@@ -69,7 +68,7 @@ func serverHandle(_ *cobra.Command, _ []string) {
 	}
 	limiter.Init()
 	//get node info
-	nodes, err := node.New(c.NodeConfigs, filepath.Dir(config))
+	nodes, err := node.New(c.NodeConfigs)
 	if err != nil {
 		log.WithField("err", err).Error("Get node info failed")
 		return
@@ -170,7 +169,7 @@ func reload(config string, nodes **node.Node, v2core **core.V2Core) error {
 		}
 	}
 
-	newNodes, err := node.New(newConf.NodeConfigs, filepath.Dir(config))
+	newNodes, err := node.New(newConf.NodeConfigs)
 	if err != nil {
 		return err
 	}

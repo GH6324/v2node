@@ -14,7 +14,7 @@ type Node struct {
 	NodeInfos   []*panel.NodeInfo
 }
 
-func New(nodes []conf.NodeConfig, configpath string) (*Node, error) {
+func New(nodes []conf.NodeConfig) (*Node, error) {
 	n := &Node{
 		controllers: make([]*Controller, len(nodes)),
 		NodeInfos:   make([]*panel.NodeInfo, len(nodes)),
