@@ -114,8 +114,6 @@ func serverHandle(_ *cobra.Command, _ []string) {
 		select {
 		case <-osSignals:
 			log.Info("收到退出信号，正在关闭程序...")
-			nodes.Close()
-			_ = v2core.Close()
 			os.Exit(0)
 		case <-reloadCh:
 			log.Info("收到重启信号，正在重新加载配置...")
