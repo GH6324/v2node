@@ -128,7 +128,7 @@ func (c *Client) GetNodeInfo() (node *NodeInfo, err error) {
 	}
 	c.responseBodyHash = newBodyHash
 	c.nodeEtag = r.Header().Get("ETag")
-	if err = c.checkResponse(r, path, err); err != nil {
+	if err != nil {
 		return nil, err
 	}
 

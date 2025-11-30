@@ -34,20 +34,18 @@ func (t *Task) Start(first bool) error {
 			}
 		}
 
-		ticker := time.NewTicker(t.Interval)
-		defer ticker.Stop()
-
 		for {
 			select {
-			case <-ticker.C:
-				if err := t.Execute(); err != nil {
-					t.access.Lock()
-					t.running = false
-					close(t.stop)
-					t.access.Unlock()
-					return
-				}
+			case <-time.After(t.Interval):
 			case <-t.stop:
+				return
+			}
+
+			if err := t.Execute(); err != nil {
+				t.access.Lock()
+				t.running = false
+				close(t.stop)
+				t.access.Unlock()
 				return
 			}
 		}
