@@ -24,7 +24,7 @@ func (c *Controller) reportUserTrafficTask() (err error) {
 			}).Info("Report user traffic failed")
 		} else {
 			log.WithField("tag", c.tag).Infof("Report %d users traffic", len(userTraffic))
-			log.WithField("tag", c.tag).Debugf("User traffic: %+v", userTraffic)
+			//log.WithField("tag", c.tag).Debugf("User traffic: %+v", userTraffic)
 		}
 	}
 
@@ -56,7 +56,7 @@ func (c *Controller) reportUserTrafficTask() (err error) {
 			}).Info("Report online users failed")
 		} else {
 			log.WithField("tag", c.tag).Infof("Total %d online users, %d Reported", len(*onlineDevice), len(result))
-			log.WithField("tag", c.tag).Debugf("Online users: %+v", data)
+			//log.WithField("tag", c.tag).Debugf("Online users: %+v", data)
 		}
 	}
 

@@ -64,6 +64,8 @@ func (c *Controller) nodeInfoMonitor() (err error) {
 			log.Panic("Reload failed")
 		}
 	}
+	log.WithField("tag", c.tag).Debug("Node info no change")
+
 	// get user info
 	newU, err := c.apiClient.GetUserList()
 	if err != nil {
@@ -89,6 +91,7 @@ func (c *Controller) nodeInfoMonitor() (err error) {
 	}
 	// node no changed, check users
 	if len(newU) == 0 {
+		log.WithField("tag", c.tag).Debug("User list no change")
 		return nil
 	}
 	deleted, added := compareUserList(c.userList, newU)
