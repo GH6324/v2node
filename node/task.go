@@ -12,11 +12,13 @@ import (
 func (c *Controller) startTasks(node *panel.NodeInfo) {
 	// fetch node info task
 	c.nodeInfoMonitorPeriodic = &task.Task{
+		Name:     "nodeInfoMonitor",
 		Interval: node.PullInterval,
 		Execute:  c.nodeInfoMonitor,
 	}
 	// fetch user list task
 	c.userReportPeriodic = &task.Task{
+		Name:     "reportUserTrafficTask",
 		Interval: node.PushInterval,
 		Execute:  c.reportUserTrafficTask,
 	}
@@ -30,6 +32,7 @@ func (c *Controller) startTasks(node *panel.NodeInfo) {
 		case "none", "", "file", "self":
 		default:
 			c.renewCertPeriodic = &task.Task{
+				Name:     "renewCertTask",
 				Interval: time.Hour * 24,
 				Execute:  c.renewCertTask,
 			}

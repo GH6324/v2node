@@ -3,9 +3,12 @@ package task
 import (
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Task struct {
+	Name     string
 	Interval time.Duration
 	Execute  func() error
 	access   sync.Mutex
@@ -61,4 +64,5 @@ func (t *Task) Close() {
 		close(t.stop)
 	}
 	t.access.Unlock()
+	log.Warningf("Task %s stopped", t.Name)
 }
