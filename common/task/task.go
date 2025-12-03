@@ -45,6 +45,7 @@ func (t *Task) Start(first bool) error {
 			}
 
 			if err := t.Execute(); err != nil {
+				log.Errorf("Task %s execution error: %v", t.Name, err)
 				t.access.Lock()
 				t.running = false
 				close(t.stop)
