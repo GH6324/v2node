@@ -27,29 +27,27 @@ func (t *Task) Start(first bool) error {
 	t.access.Unlock()
 
 	go func() {
+		timer := time.NewTimer(t.Interval)
+		defer timer.Stop()
 		if first {
 			if err := t.Execute(); err != nil {
-				t.access.Lock()
-				t.running = false
-				close(t.stop)
-				t.access.Unlock()
+				t.safeStop()
 				return
 			}
 		}
 
 		for {
+			timer.Reset(t.Interval)
 			select {
-			case <-time.After(t.Interval):
+			case <-timer.C:
+				// continue
 			case <-t.stop:
 				return
 			}
 
 			if err := t.Execute(); err != nil {
 				log.Errorf("Task %s execution error: %v", t.Name, err)
-				t.access.Lock()
-				t.running = false
-				close(t.stop)
-				t.access.Unlock()
+				t.safeStop()
 				return
 			}
 		}
@@ -58,12 +56,16 @@ func (t *Task) Start(first bool) error {
 	return nil
 }
 
-func (t *Task) Close() {
+func (t *Task) safeStop() {
 	t.access.Lock()
 	if t.running {
 		t.running = false
 		close(t.stop)
 	}
 	t.access.Unlock()
+}
+
+func (t *Task) Close() {
+	t.safeStop()
 	log.Warningf("Task %s stopped", t.Name)
 }
