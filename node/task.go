@@ -44,6 +44,7 @@ func (c *Controller) startTasks(node *panel.NodeInfo) {
 }
 
 func (c *Controller) nodeInfoMonitor() (err error) {
+
 	// get node info
 	newN, err := c.apiClient.GetNodeInfo()
 	if err != nil {

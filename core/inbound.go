@@ -425,12 +425,43 @@ func buildTuic(nodeInfo *panel.NodeInfo, inbound *coreConf.InboundDetourConfig) 
 
 func buildAnyTLS(nodeInfo *panel.NodeInfo, inbound *coreConf.InboundDetourConfig) error {
 	inbound.Protocol = "anytls"
-	s := nodeInfo.Common
+	v := nodeInfo.Common
 	settings := &coreConf.AnyTLSServerConfig{
-		PaddingScheme: s.PaddingScheme,
+		PaddingScheme: v.PaddingScheme,
 	}
-	t := coreConf.TransportProtocol("tcp")
+	t := coreConf.TransportProtocol(v.Network)
 	inbound.StreamSetting = &coreConf.StreamConfig{Network: &t}
+	if len(v.NetworkSettings) != 0 {
+		switch v.Network {
+		case "tcp":
+			err := json.Unmarshal(v.NetworkSettings, &inbound.StreamSetting.TCPSettings)
+			if err != nil {
+				return fmt.Errorf("unmarshal tcp settings error: %s", err)
+			}
+		case "ws":
+			err := json.Unmarshal(v.NetworkSettings, &inbound.StreamSetting.WSSettings)
+			if err != nil {
+				return fmt.Errorf("unmarshal ws settings error: %s", err)
+			}
+		case "grpc":
+			err := json.Unmarshal(v.NetworkSettings, &inbound.StreamSetting.GRPCSettings)
+			if err != nil {
+				return fmt.Errorf("unmarshal grpc settings error: %s", err)
+			}
+		case "httpupgrade":
+			err := json.Unmarshal(v.NetworkSettings, &inbound.StreamSetting.HTTPUPGRADESettings)
+			if err != nil {
+				return fmt.Errorf("unmarshal httpupgrade settings error: %s", err)
+			}
+		case "splithttp", "xhttp":
+			err := json.Unmarshal(v.NetworkSettings, &inbound.StreamSetting.SplitHTTPSettings)
+			if err != nil {
+				return fmt.Errorf("unmarshal xhttp settings error: %s", err)
+			}
+		default:
+			return errors.New("the network type is not vail")
+		}
+	}
 	sets, err := json.Marshal(settings)
 	inbound.Settings = (*json.RawMessage)(&sets)
 	if err != nil {
