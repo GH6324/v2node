@@ -15,12 +15,14 @@ func (c *Controller) startTasks(node *panel.NodeInfo) {
 		Name:     "nodeInfoMonitor",
 		Interval: node.PullInterval,
 		Execute:  c.nodeInfoMonitor,
+		Reload:   c.reloadTask,
 	}
 	// fetch user list task
 	c.userReportPeriodic = &task.Task{
 		Name:     "reportUserTrafficTask",
 		Interval: node.PushInterval,
 		Execute:  c.reportUserTrafficTask,
+		Reload:   c.reloadTask,
 	}
 	log.WithField("tag", c.tag).Info("Start monitor node status")
 	// delay to start nodeInfoMonitor
@@ -35,6 +37,7 @@ func (c *Controller) startTasks(node *panel.NodeInfo) {
 				Name:     "renewCertTask",
 				Interval: time.Hour * 24,
 				Execute:  c.renewCertTask,
+				Reload:   c.reloadTask,
 			}
 			log.WithField("tag", c.tag).Info("Start renew cert")
 			// delay to start renewCert
@@ -43,8 +46,21 @@ func (c *Controller) startTasks(node *panel.NodeInfo) {
 	}
 }
 
-func (c *Controller) nodeInfoMonitor() (err error) {
+func (c *Controller) reloadTask() {
+	newClient, err := panel.New(c.conf)
+	if err != nil {
+		log.Panic("Tasks reload failed")
+	}
+	c.apiClient = newClient
+	c.nodeInfoMonitorPeriodic.Close()
+	c.userReportPeriodic.Close()
+	if c.renewCertPeriodic != nil {
+		c.renewCertPeriodic.Close()
+	}
+	c.startTasks(c.info)
+}
 
+func (c *Controller) nodeInfoMonitor() (err error) {
 	// get node info
 	newN, err := c.apiClient.GetNodeInfo()
 	if err != nil {

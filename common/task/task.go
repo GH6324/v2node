@@ -12,6 +12,7 @@ type Task struct {
 	Name     string
 	Interval time.Duration
 	Execute  func() error
+	Reload   func()
 	Access   sync.RWMutex
 	Running  bool
 	Stop     chan struct{}
@@ -48,7 +49,7 @@ func (t *Task) Start(first bool) error {
 
 			if err := t.ExecuteWithTimeout(); err != nil {
 				log.Errorf("Task %s execution error: %v", t.Name, err)
-				t.safeStop()
+				t.Reload()
 				return
 			}
 		}
@@ -69,7 +70,7 @@ func (t *Task) ExecuteWithTimeout() error {
 	select {
 	case <-ctx.Done():
 		log.Errorf("Task %s execution timed out", t.Name)
-		return nil
+		return ctx.Err()
 	case err := <-done:
 		return err
 	}

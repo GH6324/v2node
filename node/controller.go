@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	panel "github.com/wyx2685/v2node/api/v2board"
 	"github.com/wyx2685/v2node/common/task"
+	"github.com/wyx2685/v2node/conf"
 	"github.com/wyx2685/v2node/core"
 	"github.com/wyx2685/v2node/limiter"
 )
@@ -18,6 +19,7 @@ type Controller struct {
 	limiter                 *limiter.Limiter
 	userList                []panel.UserInfo
 	aliveMap                map[int]int
+	conf                    *conf.NodeConfig
 	info                    *panel.NodeInfo
 	nodeInfoMonitorPeriodic *task.Task
 	userReportPeriodic      *task.Task
@@ -25,10 +27,11 @@ type Controller struct {
 }
 
 // NewController return a Node controller with default parameters.
-func NewController(api *panel.Client, info *panel.NodeInfo) *Controller {
+func NewController(api *panel.Client, conf *conf.NodeConfig, info *panel.NodeInfo) *Controller {
 	controller := &Controller{
 		apiClient: api,
 		info:      info,
+		conf:      conf,
 	}
 	return controller
 }

@@ -18,6 +18,10 @@ import (
 	coreConf "github.com/xtls/xray-core/infra/conf"
 )
 
+type NetworkSettingsProxyProtocol struct {
+	AcceptProxyProtocol bool `json:"acceptProxyProtocol"`
+}
+
 func (v *V2Core) removeInbound(tag string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -67,6 +71,28 @@ func buildInbound(nodeInfo *panel.NodeInfo, tag string) (*core.InboundHandlerCon
 		return nil, err
 	}
 	// Set network protocol
+	if len(nodeInfo.Common.NetworkSettings) > 0 {
+		n := &NetworkSettingsProxyProtocol{}
+		err := json.Unmarshal(nodeInfo.Common.NetworkSettings, n)
+		if err != nil {
+			return nil, fmt.Errorf("unmarshal network settings error: %s", err)
+		}
+		if n.AcceptProxyProtocol {
+			if in.StreamSetting == nil {
+				t := coreConf.TransportProtocol(nodeInfo.Common.Network)
+				in.StreamSetting = &coreConf.StreamConfig{
+					Network: &t,
+					SocketSettings: &coreConf.SocketConfig{
+						AcceptProxyProtocol: n.AcceptProxyProtocol,
+					},
+				}
+			} else {
+				in.StreamSetting.SocketSettings = &coreConf.SocketConfig{
+					AcceptProxyProtocol: n.AcceptProxyProtocol,
+				}
+			}
+		}
+	}
 	// Set server port
 	in.PortList = &coreConf.PortList{
 		Range: []coreConf.PortRange{

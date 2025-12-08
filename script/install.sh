@@ -236,7 +236,7 @@ generate_v2node_config() {
             "ApiHost": "${api_host}",
             "NodeID": ${node_id},
             "ApiKey": "${api_key}",
-            "Timeout": 30
+            "Timeout": 15
         }
     ]
 }
