@@ -156,8 +156,8 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pquerna/otp v1.5.0 // indirect
-	github.com/quic-go/qpack v0.5.1 // indirect
-	github.com/quic-go/quic-go v0.56.0 // indirect
+	github.com/quic-go/qpack v0.6.0 // indirect
+	github.com/quic-go/quic-go v0.57.0 // indirect
 	github.com/refraction-networking/utls v1.8.1 // indirect
 	github.com/regfish/regfish-dnsapi-go v0.1.1 // indirect
 	github.com/riobard/go-bloom v0.0.0-20200614022211-cdc8013cb5b3 // indirect
@@ -165,9 +165,9 @@ require (
 	github.com/sacloud/go-http v0.1.9 // indirect
 	github.com/sacloud/iaas-api-go v1.16.1 // indirect
 	github.com/sacloud/packages-go v0.0.11 // indirect
-	github.com/sagernet/quic-go v0.55.0-sing-box-mod.2 // indirect
+	github.com/sagernet/quic-go v0.57.1-sing-box-mod.1 // indirect
 	github.com/sagernet/sing v0.8.0-beta.6 // indirect
-	github.com/sagernet/sing-quic v0.6.0-beta.4 // indirect
+	github.com/sagernet/sing-quic v0.6.0-beta.5 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.7 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
@@ -234,4 +234,4 @@ require (
 	lukechampine.com/blake3 v1.4.1 // indirect
 )
 
-replace github.com/xtls/xray-core v1.251208.0 => github.com/wyx2685/xray-core v0.0.0-20251208163142-59b3434a00d2
+replace github.com/xtls/xray-core v1.251208.0 => github.com/wyx2685/xray-core v0.0.0-20251209140916-3e1bd9b22109

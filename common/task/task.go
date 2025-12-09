@@ -49,7 +49,6 @@ func (t *Task) Start(first bool) error {
 
 			if err := t.ExecuteWithTimeout(); err != nil {
 				log.Errorf("Task %s execution error: %v", t.Name, err)
-				t.Reload()
 				return
 			}
 		}
@@ -69,8 +68,9 @@ func (t *Task) ExecuteWithTimeout() error {
 
 	select {
 	case <-ctx.Done():
-		log.Errorf("Task %s execution timed out", t.Name)
-		return ctx.Err()
+		log.Errorf("Task %s execution timed out, reloading", t.Name)
+		t.Reload()
+		return nil
 	case err := <-done:
 		return err
 	}

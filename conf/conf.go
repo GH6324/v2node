@@ -10,6 +10,7 @@ import (
 type Conf struct {
 	LogConfig   LogConfig    `mapstructure:"Log"`
 	NodeConfigs []NodeConfig `mapstructure:"Nodes"`
+	PprofPort   int          `mapstructure:"PprofPort"`
 }
 
 type LogConfig struct {
