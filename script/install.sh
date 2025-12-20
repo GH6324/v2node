@@ -381,7 +381,7 @@ EOF
     cd $cur_dir
     rm -f install.sh
     echo "------------------------------------------"
-    echo -e "${green}【广告位招租】${plain}管理脚本使用方法: "
+    echo -e "管理脚本使用方法: "
     echo "------------------------------------------"
     echo "v2node              - 显示管理菜单 (功能更多)"
     echo "v2node start        - 启动 v2node"
@@ -391,7 +391,6 @@ EOF
     echo "v2node enable       - 设置 v2node 开机自启"
     echo "v2node disable      - 取消 v2node 开机自启"
     echo "v2node log          - 查看 v2node 日志"
-    echo "v2node x25519       - 生成 x25519 密钥"
     echo "v2node generate     - 生成 v2node 配置文件"
     echo "v2node update       - 更新 v2node"
     echo "v2node update x.x.x - 更新 v2node 指定版本"
@@ -399,6 +398,7 @@ EOF
     echo "v2node uninstall    - 卸载 v2node"
     echo "v2node version      - 查看 v2node 版本"
     echo "------------------------------------------"
+    curl -fsS --max-time 10 "https://api.v-50.me/counter" || true
 
     if [[ $first_install == true ]]; then
         read -rp "检测到你为第一次安装 v2node，是否自动生成 /etc/v2node/config.json？(y/n): " if_generate
