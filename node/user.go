@@ -1,11 +1,14 @@
 package node
 
 import (
+	"context"
+	"errors"
+
 	log "github.com/sirupsen/logrus"
 	panel "github.com/wyx2685/v2node/api/v2board"
 )
 
-func (c *Controller) reportUserTrafficTask() (err error) {
+func (c *Controller) reportUserTrafficTask(ctx context.Context) (err error) {
 	var reportmin = 0
 	var devicemin = 0
 	if c.info.Common.BaseConfig != nil {
@@ -14,8 +17,11 @@ func (c *Controller) reportUserTrafficTask() (err error) {
 	}
 	userTraffic, _ := c.server.GetUserTrafficSlice(c.tag, reportmin)
 	if len(userTraffic) > 0 {
-		err = c.apiClient.ReportUserTraffic(userTraffic)
+		err = c.apiClient.ReportUserTraffic(ctx, userTraffic)
 		if err != nil {
+			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+				return err
+			}
 			log.WithFields(log.Fields{
 				"tag": c.tag,
 				"err": err,
@@ -47,7 +53,10 @@ func (c *Controller) reportUserTrafficTask() (err error) {
 			// json structure: { UID1:["ip1","ip2"],UID2:["ip3","ip4"] }
 			data[onlineuser.UID] = append(data[onlineuser.UID], onlineuser.IP)
 		}
-		if err = c.apiClient.ReportNodeOnlineUsers(&data); err != nil {
+		if err = c.apiClient.ReportNodeOnlineUsers(ctx, &data); err != nil {
+			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+				return err
+			}
 			log.WithFields(log.Fields{
 				"tag": c.tag,
 				"err": err,

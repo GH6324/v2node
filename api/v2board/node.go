@@ -1,6 +1,7 @@
 package panel
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -112,13 +113,20 @@ type EncSettings struct {
 	PrivateKey    string `json:"private_key"`
 }
 
-func (c *Client) GetNodeInfo() (node *NodeInfo, err error) {
+func (c *Client) GetNodeInfo(ctx context.Context) (node *NodeInfo, err error) {
 	const path = "/api/v2/server/config"
 	r, err := c.client.
 		R().
+		SetContext(ctx).
 		SetHeader("If-None-Match", c.nodeEtag).
 		ForceContentType("application/json").
 		Get(path)
+	if err != nil {
+		return nil, err
+	}
+	if r == nil {
+		return nil, fmt.Errorf("received nil response")
+	}
 
 	if r.StatusCode() == 304 {
 		return nil, nil
@@ -130,9 +138,6 @@ func (c *Client) GetNodeInfo() (node *NodeInfo, err error) {
 	}
 	c.responseBodyHash = newBodyHash
 	c.nodeEtag = r.Header().Get("ETag")
-	if err != nil {
-		return nil, err
-	}
 
 	if r != nil {
 		defer func() {

@@ -2,6 +2,7 @@ package task
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"time"
 
@@ -11,8 +12,7 @@ import (
 type Task struct {
 	Name     string
 	Interval time.Duration
-	Execute  func() error
-	Reload   func()
+	Execute  func(context.Context) error
 	Access   sync.RWMutex
 	Running  bool
 	Stop     chan struct{}
@@ -61,15 +61,17 @@ func (t *Task) ExecuteWithTimeout() error {
 	done := make(chan error, 1)
 
 	go func() {
-		done <- t.Execute()
+		done <- t.Execute(ctx)
 	}()
 
 	select {
 	case <-ctx.Done():
-		log.Errorf("Task %s execution timed out, reloading", t.Name)
-		t.Reload()
+		log.Errorf("Task %s execution timed out, canceling current run", t.Name)
 		return nil
 	case err := <-done:
+		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			return nil
+		}
 		return err
 	}
 }
