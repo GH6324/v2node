@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const DefaultNodeRetryCount = 3
+const DefaultNodeRetryCount = 1
 const DefaultNodeTimeout = 15
 
 type Conf struct {

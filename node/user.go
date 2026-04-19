@@ -19,13 +19,13 @@ func (c *Controller) reportUserTrafficTask(ctx context.Context) (err error) {
 	if len(userTraffic) > 0 {
 		err = c.apiClient.ReportUserTraffic(ctx, userTraffic)
 		if err != nil {
-			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-				return err
-			}
 			log.WithFields(log.Fields{
 				"tag": c.tag,
 				"err": err,
 			}).Info("Report user traffic failed")
+			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+				return err
+			}
 		} else {
 			log.WithField("tag", c.tag).Infof("Report %d users traffic", len(userTraffic))
 			//log.WithField("tag", c.tag).Debugf("User traffic: %+v", userTraffic)
@@ -33,7 +33,10 @@ func (c *Controller) reportUserTrafficTask(ctx context.Context) (err error) {
 	}
 
 	if onlineDevice, err := c.limiter.GetOnlineDevice(); err != nil {
-		log.Print(err)
+		log.WithFields(log.Fields{
+			"tag": c.tag,
+			"err": err,
+		}).Info("Get online device failed")
 	} else if len(*onlineDevice) > 0 {
 		var result []panel.OnlineUser
 		var nocountUID = make(map[int]struct{})
@@ -54,13 +57,13 @@ func (c *Controller) reportUserTrafficTask(ctx context.Context) (err error) {
 			data[onlineuser.UID] = append(data[onlineuser.UID], onlineuser.IP)
 		}
 		if err = c.apiClient.ReportNodeOnlineUsers(ctx, &data); err != nil {
-			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-				return err
-			}
 			log.WithFields(log.Fields{
 				"tag": c.tag,
 				"err": err,
 			}).Info("Report online users failed")
+			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+				return err
+			}
 		} else {
 			log.WithField("tag", c.tag).Infof("Total %d online users, %d Reported", len(*onlineDevice), len(result))
 			//log.WithField("tag", c.tag).Debugf("Online users: %+v", data)

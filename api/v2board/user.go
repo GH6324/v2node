@@ -153,7 +153,7 @@ func (c *Client) ReportNodeOnlineUsers(ctx context.Context, data *map[int][]stri
 		Post(path)
 
 	if err != nil {
-		return nil
+		return err
 	}
 
 	return nil

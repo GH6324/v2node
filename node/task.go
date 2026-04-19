@@ -17,12 +17,14 @@ func (c *Controller) startTasks(node *panel.NodeInfo) {
 		Name:     "nodeInfoMonitor",
 		Interval: node.PullInterval,
 		Execute:  c.nodeInfoMonitor,
+		ReloadCh: c.server.ReloadCh,
 	}
 	// fetch user list task
 	c.userReportPeriodic = &task.Task{
 		Name:     "reportUserTrafficTask",
 		Interval: node.PushInterval,
 		Execute:  c.reportUserTrafficTask,
+		ReloadCh: c.server.ReloadCh,
 	}
 	log.WithField("tag", c.tag).Info("Start monitor node status")
 	// delay to start nodeInfoMonitor
@@ -37,6 +39,7 @@ func (c *Controller) startTasks(node *panel.NodeInfo) {
 				Name:     "renewCertTask",
 				Interval: time.Hour * 24,
 				Execute:  c.renewCertTask,
+				ReloadCh: c.server.ReloadCh,
 			}
 			log.WithField("tag", c.tag).Info("Start renew cert")
 			// delay to start renewCert
