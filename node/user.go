@@ -56,6 +56,9 @@ func (c *Controller) reportUserTrafficTask(ctx context.Context) (err error) {
 			// json structure: { UID1:["ip1","ip2"],UID2:["ip3","ip4"] }
 			data[onlineuser.UID] = append(data[onlineuser.UID], onlineuser.IP)
 		}
+		if len(data) == 0 {
+			return nil
+		}
 		if err = c.apiClient.ReportNodeOnlineUsers(ctx, &data); err != nil {
 			log.WithFields(log.Fields{
 				"tag": c.tag,
@@ -70,7 +73,6 @@ func (c *Controller) reportUserTrafficTask(ctx context.Context) (err error) {
 		}
 	}
 
-	userTraffic = nil
 	return nil
 }
 
